@@ -21,6 +21,7 @@ import time
 
 import mouse
 import keyboard
+import pyautogui
 
 #-----------------------------------------------------------------------------
 #-----------------------------------------------------------------------------
@@ -108,6 +109,17 @@ class actionSimulator(object):
         if self.recordFlg: self.dumpsFile()
 
 #-----------------------------------------------------------------------------
+    def ReslutionCovert(self):
+        if len(self.mouseEvts) > 0:
+            crtX, crtY = pyautogui.size() # get the current screen solution.
+            if crtX != 1920 or crtY != 1080:
+                for item in self.mouseEvts:
+                    if 'x' in item.keys():
+                        item['x'] = int(float(item['x'])/1920*crtX)
+                    if 'y' in item.keys():
+                        item['y'] = int(float(item['x'])/1080*crtY)
+
+#-----------------------------------------------------------------------------
     def replay(self, clearDesk=True, mouseFlg=True, keyFlg=True):
         """ Replay the users' action.
             Args:
@@ -118,6 +130,7 @@ class actionSimulator(object):
         m_thread = None
         k_thread = None
         if mouseFlg:
+            self.ReslutionCovert()
             m_thread = threading.Thread(target = lambda :mouse.play(self.mouseEvts))   
         if keyFlg:
             k_thread = threading.Thread(target = lambda :keyboard.play(self.keyboardEvts))
